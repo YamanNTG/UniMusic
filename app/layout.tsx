@@ -24,7 +24,7 @@ export default function RootLayout({
           <Providers>
             <Navbar />
             <main className="container py-10">{children}</main>
-            <SpeedInsights />
+            {/* <SpeedInsights /> */}
           </Providers>
         </body>
       </html>
