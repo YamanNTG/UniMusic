@@ -19,8 +19,3 @@ export type InstrumentCardProps = {
   price: number;
   instructorImage: string;
 };
-
-export type InstrumentsListProps = {
-  instruments: InstrumentCardProps[];
-  children?: React.ReactNode;
-};
