@@ -1,0 +1,56 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider          = "mongodb"
+  url               = env("DATABASE_URL")
+}
+
+model Profile {
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  clerkId      String     @unique
+  firstName    String
+  lastName     String
+  username     String
+  email        String
+  profileImage String
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  instruments Instrument[]
+  favorites Favorite[]
+}
+
+model Instrument {
+  id          String     @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  tagline     String
+  category    String
+  image       String
+  description String
+  instructorImage String
+  price       Int
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  profile     Profile    @relation(fields: [profileId], references: [clerkId], onDelete: Cascade)
+  profileId   String
+  favorites Favorite[]
+}
+
+model Favorite {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  profile   Profile  @relation(fields: [profileId], references: [clerkId], onDelete: Cascade)
+  profileId String
+
+  instrument   Instrument  @relation(fields: [instrumentId], references: [id], onDelete: Cascade)
+  instrumentId String @db.ObjectId
+}
