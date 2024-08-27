@@ -5,9 +5,7 @@ import { fetchFavorites } from "@/utils/actions";
 async function FavoritesPage() {
   const favorites = await fetchFavorites();
   if (favorites.length === 0) return <EmptyList />;
-  return (
-    <InstrumentsList instruments={favorites}>FavoritesPage</InstrumentsList>
-  );
+  return <InstrumentsList instruments={favorites} />;
 }
 
 export default FavoritesPage;

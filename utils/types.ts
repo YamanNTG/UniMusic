@@ -3,13 +3,13 @@ export type actionFunction = (
   formData: FormData
 ) => Promise<{ message: string }>;
 
-export interface CloudinaryUploadOptions {
+export type CloudinaryUploadOptions = {
   folder?: string;
   public_id?: string;
   overwrite?: boolean;
   resource_type?: "image" | "video" | "raw" | "auto";
   transformation?: object | string;
-}
+};
 
 export type InstrumentCardProps = {
   image: string;
@@ -18,4 +18,9 @@ export type InstrumentCardProps = {
   tagline: string;
   price: number;
   instructorImage: string;
+};
+
+export type InstrumentsListProps = {
+  instruments: InstrumentCardProps[];
+  children?: React.ReactNode;
 };
