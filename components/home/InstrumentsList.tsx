@@ -8,7 +8,7 @@ function InstrumentsList({ instruments, children }: InstrumentsListProps) {
         return (
           <div key={instrument.id}>
             {children}
-            <InstrumentCard instrument={instrument} />
+            <InstrumentCard key={instrument.id} instrument={instrument} />
           </div>
         );
       })}
