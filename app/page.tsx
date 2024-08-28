@@ -16,14 +16,14 @@ function HomePage({
         category={searchParams.category}
         search={searchParams.search}
       />
-      <Suspense fallback={<LoadingCards />}>
+
+      {/* <Suspense fallback={<LoadingCards />}>
         <InstrumentsContainer
           category={searchParams.category}
           search={searchParams.search}
         />
-        {/* carousle with images of the top 5 best rated classes that 
-        will open the respective class */}
-      </Suspense>
+        
+      </Suspense> */}
     </section>
   );
 }
