@@ -9,7 +9,7 @@ const isProtectedRoute = createRouteMatcher([
   "/reviews(.*)",
 ]);
 
-export default clerkMiddleware((auth, req) => {
+export default clerkMiddleware(async (auth, req) => {
   if (isProtectedRoute(req)) auth().protect();
 });
 
