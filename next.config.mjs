@@ -1,5 +1,3 @@
-import withSvgr from "@svgr/webpack"; // Ensure to use the correct package
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
