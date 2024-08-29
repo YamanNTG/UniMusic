@@ -1,6 +1,6 @@
 {
   "functions": {
-    "./src/**/*.{ts,tsx}": {
+    "app/**/*": {
       "maxDuration": 30
     }
   }
