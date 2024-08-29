@@ -44,3 +44,5 @@ async function InstrumentDetailsPage({ params }: { params: { id: string } }) {
     </section>
   );
 }
+
+export default InstrumentDetailsPage;
