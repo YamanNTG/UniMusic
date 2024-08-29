@@ -2,8 +2,16 @@
 
 import LoadingCards from "@/components/card/LoadingCards";
 
+// function loading() {
+//   return <LoadingCards />;
+// }
+
+// export default loading;
+
+import React from "react";
+
 function loading() {
-  return <LoadingCards />;
+  return <div>loading</div>;
 }
 
 export default loading;
