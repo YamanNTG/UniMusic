@@ -1,17 +1,9 @@
-// "use client";
+"use client";
 
-// import LoadingCards from "@/components/card/LoadingCards";
-
-// function loading() {
-//   return <LoadingCards />;
-// }
-
-// export default loading;
-
-import React from "react";
+import LoadingCards from "@/components/card/LoadingCards";
 
 function loading() {
-  return <div>loading</div>;
+  return <LoadingCards />;
 }
 
 export default loading;
