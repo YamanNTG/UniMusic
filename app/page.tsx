@@ -17,12 +17,10 @@ function HomePage({
         search={searchParams.search}
       />
 
-      <Suspense fallback={<LoadingCards />}>
-        <InstrumentsContainer
-          category={searchParams.category}
-          search={searchParams.search}
-        />
-      </Suspense>
+      <InstrumentsContainer
+        category={searchParams.category}
+        search={searchParams.search}
+      />
     </section>
   );
 }
