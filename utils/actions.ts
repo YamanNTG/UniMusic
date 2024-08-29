@@ -107,9 +107,7 @@ export const updateProfileAction = async (
       where: {
         clerkId: user.id,
       },
-      data: {
-        ...validatedFields,
-      },
+      data: validatedFields,
     });
     revalidatePath("/profile");
     return { message: "Profile Updated Successfully" };
