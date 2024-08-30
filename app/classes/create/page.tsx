@@ -34,7 +34,7 @@ function CreateInstrument() {
             name="description"
             labelText="Description (10-1000 words)"
           />
-          <div className="flex  justify-between mt-4">
+          <div className="flex flex-col md:flex-row md:justify-between mt-4 space-y-4">
             <ImageInput
               isRequired={true}
               name="image"
