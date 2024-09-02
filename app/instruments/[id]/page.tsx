@@ -7,10 +7,11 @@ import ImageContainer from "@/components/instruments/ImageContainer";
 import ShareButton from "@/components/instruments/ShareButton";
 import UserInfo from "@/components/instruments/UserInfo";
 import { Separator } from "@/components/ui/separator";
-import { fetchInstrumentDetails } from "@/utils/actions";
+import { fetchInstrumentDetails, findExistingReview } from "@/utils/actions";
 import { redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
 import SubmitReview from "@/components/reviews/SubmitReview";
+import InstrumentReviews from "@/components/reviews/InstrumentReviews";
 
 async function InstrumentDetailsPage({ params }: { params: { id: string } }) {
   const instrument = await fetchInstrumentDetails(params.id);
@@ -19,7 +20,8 @@ async function InstrumentDetailsPage({ params }: { params: { id: string } }) {
   const instructorImage = instrument.instructorImage;
   const { userId } = auth();
   const isNotOwner = instrument.profile.clerkId !== userId;
-  const reviewDoesNotExist = userId && isNotOwner;
+  const reviewDoesNotExist =
+    userId && isNotOwner && !(await findExistingReview(userId, instrument.id));
   return (
     <section>
       <BreadCrumbs name={instrument.name} />
@@ -46,7 +48,8 @@ async function InstrumentDetailsPage({ params }: { params: { id: string } }) {
           <BookingCalendar />
         </div>
       </section>
-      <SubmitReview instrumentId={instrument.id} />
+      {reviewDoesNotExist && <SubmitReview instrumentId={instrument.id} />}
+      <InstrumentReviews instrumentId={instrument.id} />
     </section>
   );
 }
