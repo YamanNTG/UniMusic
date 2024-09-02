@@ -76,3 +76,9 @@ export const instrumentSchema = z.object({
     }
   ),
 });
+
+export const createReviewSchema = z.object({
+  instrumentId: z.string(),
+  rating: z.coerce.number().int().min(1).max(5),
+  comment: z.string().min(10).max(1000),
+});

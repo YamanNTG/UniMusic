@@ -9,12 +9,17 @@ import UserInfo from "@/components/instruments/UserInfo";
 import { Separator } from "@/components/ui/separator";
 import { fetchInstrumentDetails } from "@/utils/actions";
 import { redirect } from "next/navigation";
+import { auth } from "@clerk/nextjs/server";
+import SubmitReview from "@/components/reviews/SubmitReview";
 
 async function InstrumentDetailsPage({ params }: { params: { id: string } }) {
   const instrument = await fetchInstrumentDetails(params.id);
   if (!instrument) redirect("/");
   const firstName = instrument.profile.firstName;
   const instructorImage = instrument.instructorImage;
+  const { userId } = auth();
+  const isNotOwner = instrument.profile.clerkId !== userId;
+  const reviewDoesNotExist = userId && isNotOwner;
   return (
     <section>
       <BreadCrumbs name={instrument.name} />
@@ -41,6 +46,7 @@ async function InstrumentDetailsPage({ params }: { params: { id: string } }) {
           <BookingCalendar />
         </div>
       </section>
+      <SubmitReview instrumentId={instrument.id} />
     </section>
   );
 }

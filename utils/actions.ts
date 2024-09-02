@@ -1,6 +1,7 @@
 "use server";
 import { v2 as cloudinary } from "cloudinary";
 import {
+  createReviewSchema,
   imageSchema,
   instrumentSchema,
   profileSchema,
@@ -11,6 +12,7 @@ import { auth, clerkClient, currentUser } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { uploadImageToCloudinary } from "./cloudinary";
+import { error } from "console";
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
@@ -316,4 +318,37 @@ export const fetchInstrumentDetails = (id: string) => {
       profile: true,
     },
   });
+};
+
+export const createReviewAction = async (
+  prevState: any,
+  formData: FormData
+) => {
+  const user = await getAuthUser();
+  try {
+    const rawData = Object.fromEntries(formData);
+    const validatedFields = validateWithZodSchema(createReviewSchema, rawData);
+    await db.review.create({
+      data: {
+        ...validatedFields,
+        profileId: user.id,
+      },
+    });
+    revalidatePath(`/instruments/${validatedFields.instrumentId}`);
+    return { message: "Review submitted successfully" };
+  } catch (error) {
+    return renderError(error);
+  }
+};
+
+export const fetchInstrumentReviews = async () => {
+  return { message: "fetch reviews" };
+};
+
+export const fetchInstrumentReviewsByUser = async () => {
+  return { message: "fetch user reviews" };
+};
+
+export const deleteReviewAction = async () => {
+  return { message: "delete  reviews" };
 };
