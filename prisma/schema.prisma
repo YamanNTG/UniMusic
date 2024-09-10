@@ -26,6 +26,7 @@ model Profile {
   instruments Instrument[]
   favorites Favorite[]
   reviews Review[]
+  bookings Booking[]
 }
 
 model Instrument {
@@ -43,6 +44,7 @@ model Instrument {
   profileId   String
   favorites Favorite[]
   reviews Review[]
+  bookings Booking[]
 }
 
 model Favorite {
@@ -67,4 +69,17 @@ model Review {
   comment   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Booking {
+  id             String      @id @default(auto()) @map("_id") @db.ObjectId
+  profile        Profile     @relation(fields: [profileId], references: [clerkId], onDelete: Cascade)
+  profileId      String
+  instrument     Instrument  @relation(fields: [instrumentId], references: [id], onDelete: Cascade)
+  instrumentId   String      @db.ObjectId
+  orderTotal     Int
+  startTime     DateTime
+  paymentStatus  Boolean     @default(false)
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
 }

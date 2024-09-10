@@ -19,3 +19,7 @@ export type InstrumentCardProps = {
   price: number;
   instructorImage: string;
 };
+
+export type Booking = {
+  startTime: Date;
+};
