@@ -1,6 +1,5 @@
 import FavoriteToggleButton from "@/components/card/FavoriteToggleButton";
 import InstrumentRating from "@/components/card/InstrumentRating";
-import BookingCalendar from "@/components/instruments/BookingCalendar";
 import BreadCrumbs from "@/components/instruments/BreadCrumbs";
 import Description from "@/components/instruments/Description";
 import ImageContainer from "@/components/instruments/ImageContainer";
@@ -12,6 +11,16 @@ import { redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
 import SubmitReview from "@/components/reviews/SubmitReview";
 import InstrumentReviews from "@/components/reviews/InstrumentReviews";
+import dynamic from "next/dynamic";
+import { Skeleton } from "@/components/ui/skeleton";
+
+const DynamicBookingWrapper = dynamic(
+  () => import("@/components/booking/BookingWrapper"),
+  {
+    ssr: false,
+    loading: () => <Skeleton className="h-[200px] w-full" />,
+  }
+);
 
 async function InstrumentDetailsPage({ params }: { params: { id: string } }) {
   const instrument = await fetchInstrumentDetails(params.id);
@@ -45,7 +54,11 @@ async function InstrumentDetailsPage({ params }: { params: { id: string } }) {
         </div>
         <div className="lg:col-span-4 flex flex-col items-center">
           {/* calendar */}
-          <BookingCalendar />
+          <DynamicBookingWrapper
+            instrumentId={instrument.id}
+            price={instrument.price}
+            bookings={instrument.bookings}
+          />
         </div>
       </section>
       {reviewDoesNotExist && <SubmitReview instrumentId={instrument.id} />}

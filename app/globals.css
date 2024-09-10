@@ -8,6 +8,24 @@
   }
 }
 
+/* custom-datepicker.css */
+.react-datepicker,
+.react-datepicker__header,
+.react-datepicker__day,
+.react-datepicker__time-list-item {
+  @apply font-sans text-sm;
+}
+
+.react-datepicker__day--selected,
+.react-datepicker__time-list-item--selected {
+  @apply bg-blue-500 text-white;
+}
+
+.react-datepicker__day:hover,
+.react-datepicker__time-list-item:hover {
+  @apply bg-gray-200 cursor-pointer;
+}
+
 @layer base {
   :root {
     --background: 189 100% 100%;

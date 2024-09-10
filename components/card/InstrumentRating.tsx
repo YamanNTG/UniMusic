@@ -1,5 +1,5 @@
 import { FaStar } from "react-icons/fa";
-
+import { fetchInstrumentRating } from "@/utils/actions";
 async function InstrumentRating({
   instrumentId,
   inPage,
@@ -7,8 +7,8 @@ async function InstrumentRating({
   instrumentId: string;
   inPage: boolean;
 }) {
-  const rating = 4.7;
-  const count = 100;
+  const { rating, count } = await fetchInstrumentRating(instrumentId);
+  if (count === 0) return null;
 
   const className = `flex gap-1 items-center ${inPage ? "text-md" : "text-xs"}`;
   const countText = count > 1 ? "reviews" : " review";

@@ -13,6 +13,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { uploadImageToCloudinary } from "./cloudinary";
 import { error } from "console";
+import { calculateTotals } from "./calculateTotals";
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
@@ -316,6 +317,11 @@ export const fetchInstrumentDetails = (id: string) => {
     },
     include: {
       profile: true,
+      bookings: {
+        select: {
+          startTime: true,
+        },
+      },
     },
   });
 };
@@ -412,3 +418,104 @@ export const findExistingReview = async (
     },
   });
 };
+
+export async function fetchInstrumentRating(instrumentId: string) {
+  const result = await db.review.groupBy({
+    by: ["instrumentId"],
+    _avg: {
+      rating: true,
+    },
+    _count: {
+      rating: true,
+    },
+    where: {
+      instrumentId,
+    },
+  });
+  return {
+    rating: result[0]?._avg.rating?.toFixed() ?? 0,
+    count: result[0]?._count.rating ?? 0,
+  };
+}
+
+export const createBookingAction = async (prevState: {
+  instrumentId: string;
+  startTime: Date;
+}) => {
+  const user = await getAuthUser();
+  const { instrumentId, startTime } = prevState;
+  const instrument = await db.instrument.findUnique({
+    where: { id: instrumentId },
+    select: { price: true },
+  });
+  if (!instrument) {
+    return { message: "Instrument not found" };
+  }
+  const { orderTotal } = calculateTotals({ price: instrument.price });
+  try {
+    const booking = await db.booking.create({
+      data: {
+        startTime,
+        orderTotal,
+        profileId: user.id,
+        instrumentId,
+      },
+    });
+  } catch (error) {
+    return renderError(error);
+  }
+  redirect("/bookings");
+};
+
+export const fetchBookings = async () => {
+  const user = await getAuthUser();
+  const bookings = await db.booking.findMany({
+    where: {
+      profileId: user.id,
+    },
+    include: {
+      instrument: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+  return bookings;
+};
+
+export const fetchBookingsTimes = async () => {
+  const user = await getAuthUser();
+  const bookings = await db.booking.findMany({
+    where: {
+      profileId: user.id,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+  return bookings; // Returns an array of bookings with startTime
+};
+
+export async function deleteBookingAction(prevState: { bookingId: string }) {
+  const { bookingId } = prevState;
+  const user = await getAuthUser();
+
+  try {
+    const result = await db.booking.delete({
+      where: {
+        id: bookingId,
+        profileId: user.id,
+      },
+    });
+
+    revalidatePath("/bookings");
+    return { message: "Booking deleted successfully" };
+  } catch (error) {
+    return renderError(error);
+  }
+}
