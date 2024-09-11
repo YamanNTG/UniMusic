@@ -7,7 +7,11 @@ import { useInstrument } from "@/utils/store";
 
 function BookingContainer() {
   const { selectedDateTime } = useInstrument((state) => state);
-  if (!selectedDateTime || !selectedDateTime.getTime()) {
+  if (
+    !selectedDateTime ||
+    isNaN(selectedDateTime.getTime()) ||
+    (selectedDateTime.getHours() === 0 && selectedDateTime.getMinutes() === 0)
+  ) {
     return null;
   }
   return (
