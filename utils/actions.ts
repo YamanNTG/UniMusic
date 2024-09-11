@@ -489,11 +489,8 @@ export const fetchBookings = async () => {
 };
 
 export const fetchBookingsTimes = async () => {
-  const user = await getAuthUser();
+  // Fetch all bookings from the database
   const bookings = await db.booking.findMany({
-    where: {
-      profileId: user.id,
-    },
     orderBy: {
       createdAt: "desc",
     },

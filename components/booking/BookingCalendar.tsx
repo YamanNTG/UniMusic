@@ -28,7 +28,6 @@ function BookingCalendar() {
     const fetchBookedTimesForDate = async () => {
       try {
         const bookings = await fetchBookingsTimes(); // Fetch all bookings from the database
-        // Filter bookings that match the selected date only
         const filteredBookings = bookings
           .filter((booking) =>
             selectedDateTime
@@ -62,7 +61,7 @@ function BookingCalendar() {
   useEffect(() => {
     useInstrument.setState({ selectedDateTime });
   }, [selectedDateTime]);
-
+  console.log("Excluded Times:", bookedTimes);
   return (
     <div>
       <DatePicker
@@ -76,7 +75,6 @@ function BookingCalendar() {
         timeCaption="Hours"
         includeTimes={availableTimes}
         excludeTimes={bookedTimes} // Exclude only booked times for the specific selected date
-        placeholderText="Select a date and time"
       />
     </div>
   );
