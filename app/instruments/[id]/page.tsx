@@ -28,7 +28,9 @@ async function InstrumentDetailsPage({ params }: { params: { id: string } }) {
   const firstName = instrument.profile.firstName;
   const instructorImage = instrument.instructorImage;
   const { userId } = auth();
+
   const isNotOwner = instrument.profile.clerkId !== userId;
+
   const reviewDoesNotExist =
     userId && isNotOwner && !(await findExistingReview(userId, instrument.id));
   return (
@@ -54,6 +56,7 @@ async function InstrumentDetailsPage({ params }: { params: { id: string } }) {
         </div>
         <div className="lg:col-span-4 flex flex-col items-center">
           {/* calendar */}
+
           <DynamicBookingWrapper
             instrumentId={instrument.id}
             price={instrument.price}
