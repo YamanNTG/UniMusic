@@ -1,7 +1,19 @@
-import React from "react";
+import { Card, CardHeader } from "@/components/ui/card";
 
-function StatsCard() {
-  return <div>StatsCard</div>;
+type StatsCardsProps = {
+  title: string;
+  value: number;
+};
+
+async function StatsCard({ title, value }: StatsCardsProps) {
+  return (
+    <Card className="bg-muted">
+      <CardHeader className="flex flex-grow justify-between items-center">
+        <h3 className="capitalize text-3xl font-bold">{title}</h3>
+        <span className="text-primary text-5xl font-extrabold">{value}</span>
+      </CardHeader>
+    </Card>
+  );
 }
 
 export default StatsCard;
