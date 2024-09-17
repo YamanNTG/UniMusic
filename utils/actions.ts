@@ -14,6 +14,7 @@ import { redirect } from "next/navigation";
 import { uploadImageToCloudinary } from "./cloudinary";
 import { error } from "console";
 import { calculateTotals } from "./calculateTotals";
+import { formatDate } from "./format";
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
@@ -699,4 +700,64 @@ export const fetchReservations = async () => {
     },
   });
   return reservations;
+};
+
+export const hoursOfBookings = async () => {
+  const user = await getAuthUser();
+  const hours = await db.booking.count({
+    where: {
+      instrument: {
+        profileId: user.id,
+      },
+    },
+  });
+  return hours;
+};
+
+const getAdminUser = async () => {
+  const user = await getAuthUser();
+  if (user.id !== process.env.ADMIN_USER_ID) redirect("/");
+  return user;
+};
+
+export const fetchStats = async () => {
+  const usersCount = await db.profile.count();
+  const instrumentsCount = await db.instrument.count();
+  const bookingsCount = await db.booking.count();
+
+  return {
+    usersCount,
+    instrumentsCount,
+    bookingsCount,
+  };
+};
+
+export const fetchChartsData = async () => {
+  await getAdminUser();
+  const date = new Date();
+  date.setMonth(date.getMonth() - 6);
+  const sixMonthsAgo = date;
+
+  const bookings = await db.booking.findMany({
+    where: {
+      createdAt: {
+        gte: sixMonthsAgo,
+      },
+    },
+    orderBy: {
+      createdAt: "asc",
+    },
+  });
+  let bookingsPerMonth = bookings.reduce((total, current) => {
+    const date = formatDate(current.createdAt, true); // farmats the current date to be displayed on year and month
+
+    const existingEntry = total.find((entry) => entry.date === date);
+    if (existingEntry) {
+      existingEntry.count += 1;
+    } else {
+      total.push({ date, count: 1 });
+    }
+    return total;
+  }, [] as Array<{ date: string; count: number }>);
+  return bookingsPerMonth;
 };
