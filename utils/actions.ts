@@ -516,3 +516,187 @@ export async function deleteBookingAction(prevState: { bookingId: string }) {
     return renderError(error);
   }
 }
+
+export const fetchClasses = async () => {
+  const user = await getAuthUser();
+  const classes = await db.instrument.findMany({
+    where: {
+      profileId: user.id,
+    },
+    select: {
+      id: true,
+      name: true,
+      price: true,
+    },
+  });
+
+  const classesWithBookingSums = await Promise.all(
+    classes.map(async (item) => {
+      const orderTotalSum = await db.booking.aggregate({
+        where: {
+          instrumentId: item.id,
+        },
+        _sum: {
+          orderTotal: true,
+        },
+      });
+
+      return {
+        ...item,
+        orderTotalSum: orderTotalSum._sum.orderTotal,
+      };
+    })
+  );
+  return classesWithBookingSums;
+};
+
+export async function deleteClassAction(prevState: { instrumentId: string }) {
+  const { instrumentId } = prevState;
+  const user = await getAuthUser();
+
+  try {
+    await db.instrument.delete({
+      where: {
+        id: instrumentId,
+        profileId: user.id,
+      },
+    });
+    revalidatePath("/classes");
+    return { message: "Class deleted successfully" };
+  } catch (error) {
+    return renderError(error);
+  }
+}
+
+export const fetchClassDetails = async (instrumentId: string) => {
+  const user = await getAuthUser();
+  return db.instrument.findUnique({
+    where: {
+      id: instrumentId,
+      profileId: user.id,
+    },
+  });
+};
+
+export const updateInstrumentAction = async (
+  prevState: any,
+  formData: FormData
+): Promise<{ message: string }> => {
+  const user = await getAuthUser();
+  const instrumentId = formData.get("id") as string;
+  try {
+    const rawData = Object.fromEntries(formData);
+    const validatedFields = validateWithZodSchema(instrumentSchema, rawData);
+    await db.instrument.update({
+      where: {
+        id: instrumentId,
+        profileId: user.id,
+      },
+      data: {
+        ...validatedFields,
+      },
+    });
+    revalidatePath(`/classes/${instrumentId}/edit`);
+    return { message: "Update Successful" };
+  } catch (error) {
+    return renderError(error);
+  }
+};
+
+export const updateInstrumentImageAction = async (
+  prevState: any,
+  formData: FormData
+): Promise<{ message: string }> => {
+  const user = await getAuthUser();
+  const instrumentId = formData.get("id") as string;
+  try {
+    const instrumentFile = formData.get("instrumentUpdateImage") as File;
+    const validatedInstrumentFile = validateWithZodSchema(imageSchema, {
+      image: instrumentFile,
+    });
+
+    // Convert the File object to a Buffer
+    const instrumentBuffer = Buffer.from(
+      await validatedInstrumentFile.image.arrayBuffer()
+    );
+
+    // Upload the images to Cloudinary
+    const instrumentImageUrl = await uploadImageToCloudinary(instrumentBuffer, {
+      folder: "instrument_images",
+      public_id: `${user.id}_image`,
+    });
+    await db.instrument.update({
+      where: {
+        id: instrumentId,
+        profileId: user.id,
+      },
+      data: {
+        image: instrumentImageUrl,
+      },
+    });
+    revalidatePath(`/classes/${instrumentId}/edit`);
+    return { message: "Property Image Updated Successful" };
+  } catch (error) {
+    return renderError(error);
+  }
+};
+
+export const updateInstructorImageAction = async (
+  prevState: any,
+  formData: FormData
+): Promise<{ message: string }> => {
+  const user = await getAuthUser();
+  const instrumentId = formData.get("id") as string;
+  try {
+    const instructorFile = formData.get("instructorUpdateImage") as File;
+    const validatedInstructorFile = validateWithZodSchema(imageSchema, {
+      image: instructorFile,
+    });
+    // Convert the File object to a Buffer
+    const instructorBuffer = Buffer.from(
+      await validatedInstructorFile.image.arrayBuffer()
+    );
+    // Upload the images to Cloudinary
+    const instructorImageUrl = await uploadImageToCloudinary(instructorBuffer, {
+      folder: "instructors_images",
+      public_id: `${user.id}_instructor`,
+    });
+    await db.instrument.update({
+      where: {
+        id: instrumentId,
+        profileId: user.id,
+      },
+      data: {
+        instructorImage: instructorImageUrl,
+      },
+    });
+    revalidatePath(`/classes/${instrumentId}/edit`);
+    return { message: "Property Image Updated Successful" };
+  } catch (error) {
+    return renderError(error);
+  }
+};
+
+export const fetchReservations = async () => {
+  const user = await getAuthUser();
+  const reservations = await db.booking.findMany({
+    where: {
+      instrument: {
+        profileId: user.id,
+      },
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+    include: {
+      instrument: {
+        select: {
+          id: true,
+          name: true,
+          price: true,
+        },
+      },
+    },
+  });
+  return reservations;
+};

@@ -10,6 +10,7 @@ function ConfirmBooking() {
   const { userId } = useAuth();
   const { instrumentId, selectedDateTime } = useInstrument((state) => state);
   const startTime = selectedDateTime as Date;
+
   if (!userId)
     return (
       <SignInButton mode="modal">
