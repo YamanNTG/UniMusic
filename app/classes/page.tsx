@@ -45,7 +45,7 @@ async function ClassesPage() {
             const { id: instrumentId, name, price } = item;
             const { orderTotalSum } = item;
             return (
-              <TableRow>
+              <TableRow key={instrumentId}>
                 <TableCell>
                   <Link
                     href={`/instruments/${instrumentId}`}
