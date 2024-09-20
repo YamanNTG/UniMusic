@@ -444,6 +444,7 @@ export const createBookingAction = async (prevState: {
   startTime: Date;
 }) => {
   const user = await getAuthUser();
+  let bookingId: null | string = null;
   const { instrumentId, startTime } = prevState;
   const instrument = await db.instrument.findUnique({
     where: { id: instrumentId },
@@ -462,10 +463,11 @@ export const createBookingAction = async (prevState: {
         instrumentId,
       },
     });
+    bookingId = booking.id;
   } catch (error) {
     return renderError(error);
   }
-  redirect("/bookings");
+  redirect(`/checkout?bookingId=${bookingId}`);
 };
 
 export const fetchBookings = async () => {
