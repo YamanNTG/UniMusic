@@ -44,8 +44,8 @@ async function InstrumentDetailsPage({ params }: { params: { id: string } }) {
         </div>
       </header>
       <ImageContainer mainImage={instrument.image} name={instrument.name} />
-      <section className="lg:grid lg:grid-cols-12 gap-x-12 mt-12">
-        <div className="lg:col-span-8">
+      <section className="lg:grid  lg:grid-cols-12 gap-x-12 mt-12">
+        <div className=" lg:col-span-8">
           <div className="flex gap-x-4 items-center">
             <h1 className="text-xl font-bold">{instrument.name}</h1>
             <InstrumentRating inPage instrumentId={instrument.id} />
@@ -54,7 +54,7 @@ async function InstrumentDetailsPage({ params }: { params: { id: string } }) {
           <Separator className="mt-4 " />
           <Description description={instrument.description} />
         </div>
-        <div className="lg:col-span-4 flex flex-col items-center">
+        <div className=" lg:col-span-4 flex flex-col items-center">
           {/* calendar */}
 
           <DynamicBookingWrapper

@@ -37,6 +37,7 @@ export const POST = async (req: NextRequest, res: NextResponse) => {
     hour: "2-digit",
     minute: "2-digit",
   });
+
   try {
     const session = await stripe.checkout.sessions.create({
       ui_mode: "embedded",
@@ -56,7 +57,7 @@ export const POST = async (req: NextRequest, res: NextResponse) => {
         },
       ],
       mode: "payment",
-      return_url: `${origin}/api/confirm?session_id:{CHECKOUT_SESSION_ID}`,
+      return_url: `${origin}/api/confirm?session_id={CHECKOUT_SESSION_ID}`,
     });
     return Response.json({ clientSecret: session.client_secret });
   } catch (error) {

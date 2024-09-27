@@ -13,6 +13,7 @@ function CategoriesList({
   search?: string;
 }) {
   const searchTerm = search ? `&search=${search}` : "";
+
   return (
     <section>
       <ScrollArea className="py-6">
@@ -25,17 +26,20 @@ function CategoriesList({
                 href={`/?category=${item.label}${searchTerm}`}
               >
                 <article
-                  className={`p-3 flex flex-col items-center cursor-pointer duration-300  hover:text-primary w-[100px] ${
+                  className={`p-3 flex flex-col items-center cursor-pointer duration-300 hover:text-primary w-[100px] ${
                     isActive ? "text-primary" : ""
                   }`}
                 >
-                  <Image
+                  <img
                     src={item.icon}
                     alt={item.label}
-                    width={24}
-                    height={24}
+                    width="24"
+                    height="24"
+                    className="dark:invert"
                   />
-                  <p className="capitalize text-sm mt-1">{item.label}</p>
+                  <p className="capitalize text-sm mt-1 text-black dark:text-white">
+                    {item.label}
+                  </p>
                 </article>
               </Link>
             );
