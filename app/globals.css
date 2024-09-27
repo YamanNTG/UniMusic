@@ -8,22 +8,42 @@
   }
 }
 
-/* custom-datepicker.css */
+/* Light and dark theme support for the icon */
+
+/* Apply general styles for the datepicker */
 .react-datepicker,
 .react-datepicker__header,
 .react-datepicker__day,
 .react-datepicker__time-list-item {
-  @apply font-sans text-sm;
+  @apply font-sans text-sm !important;
 }
 
+/* Apply selected styles */
 .react-datepicker__day--selected,
 .react-datepicker__time-list-item--selected {
-  @apply bg-blue-500 text-white;
+  @apply bg-blue-500 text-white !important;
 }
 
+/* Hover styles */
 .react-datepicker__day:hover,
 .react-datepicker__time-list-item:hover {
-  @apply bg-gray-200 cursor-pointer;
+  @apply bg-blue-300 cursor-pointer text-accent !important;
+}
+
+/* Default layout for dates and time */
+.react-datepicker {
+  @apply flex flex-row !important;
+}
+
+/* Time container styles */
+.react-datepicker__time-container {
+  @apply w-auto !important; /* Default width for time picker */
+  margin-top: 0 !important; /* Remove margin */
+}
+
+/* Time styling */
+.react-datepicker__time {
+  border-left: 1px solid #ccc !important; /* Restore the left border */
 }
 
 @layer base {

@@ -8,7 +8,7 @@ import {
   validateWithZodSchema,
 } from "./schemas";
 import db from "./db";
-import { auth, clerkClient, currentUser } from "@clerk/nextjs/server";
+import { auth, clerkClient, currentUser, getAuth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { uploadImageToCloudinary } from "./cloudinary";
@@ -444,6 +444,13 @@ export const createBookingAction = async (prevState: {
   startTime: Date;
 }) => {
   const user = await getAuthUser();
+  await db.booking.deleteMany({
+    where: {
+      profileId: user.id,
+      paymentStatus: false,
+    },
+  });
+
   let bookingId: null | string = null;
   const { instrumentId, startTime } = prevState;
   const instrument = await db.instrument.findUnique({
@@ -475,6 +482,7 @@ export const fetchBookings = async () => {
   const bookings = await db.booking.findMany({
     where: {
       profileId: user.id,
+      paymentStatus: true,
     },
     include: {
       instrument: {
@@ -538,6 +546,7 @@ export const fetchClasses = async () => {
       const orderTotalSum = await db.booking.aggregate({
         where: {
           instrumentId: item.id,
+          paymentStatus: true,
         },
         _sum: {
           orderTotal: true,
@@ -684,6 +693,7 @@ export const fetchReservations = async () => {
   const user = await getAuthUser();
   const reservations = await db.booking.findMany({
     where: {
+      paymentStatus: true,
       instrument: {
         profileId: user.id,
       },
@@ -742,6 +752,7 @@ export const fetchChartsData = async () => {
 
   const bookings = await db.booking.findMany({
     where: {
+      paymentStatus: true,
       createdAt: {
         gte: sixMonthsAgo,
       },
@@ -762,4 +773,28 @@ export const fetchChartsData = async () => {
     return total;
   }, [] as Array<{ date: string; count: number }>);
   return bookingsPerMonth;
+};
+
+export const fetchReservationsStats = async () => {
+  const user = await getAuthUser();
+  const instruments = await db.instrument.count({
+    where: {
+      profileId: user.id,
+    },
+  });
+  const totals = await db.booking.aggregate({
+    _sum: {
+      orderTotal: true,
+    },
+    where: {
+      instrument: {
+        profileId: user.id,
+      },
+    },
+  });
+
+  return {
+    instruments,
+    amount: totals._sum.orderTotal || 0,
+  };
 };

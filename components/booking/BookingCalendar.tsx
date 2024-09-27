@@ -6,6 +6,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { useInstrument } from "@/utils/store";
 import { defaultSelected } from "@/utils/calendar";
 import { fetchBookingsTimes } from "@/utils/actions";
+import "react-datepicker/dist/react-datepicker.css";
 
 function BookingCalendar() {
   const [selectedDateTime, setSelectedDateTime] = useState<Date | undefined>(
