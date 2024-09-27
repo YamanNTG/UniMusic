@@ -61,6 +61,7 @@ async function InstrumentDetailsPage({ params }: { params: { id: string } }) {
             instrumentId={instrument.id}
             price={instrument.price}
             bookings={instrument.bookings}
+            isOwner={!isNotOwner}
           />
         </div>
       </section>

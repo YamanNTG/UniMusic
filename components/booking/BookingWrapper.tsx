@@ -10,12 +10,14 @@ type BookingWrapperProps = {
   instrumentId: string;
   price: number;
   bookings: Booking[];
+  isOwner: boolean;
 };
 
 function BookingWrapper({
   instrumentId,
   price,
   bookings,
+  isOwner,
 }: BookingWrapperProps) {
   useEffect(() => {
     useInstrument.setState({
@@ -23,11 +25,18 @@ function BookingWrapper({
       price,
       bookings,
     });
-  }, []);
+  }, [instrumentId, price, bookings]);
+
   return (
     <div>
-      <BookingCalendar />
-      <BookingContainer />
+      {isOwner ? (
+        <BookingCalendar />
+      ) : (
+        <>
+          <BookingCalendar />
+          <BookingContainer />
+        </>
+      )}
     </div>
   );
 }
