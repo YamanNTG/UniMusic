@@ -34,8 +34,11 @@ function CategoriesInput({ defaultValue }: { defaultValue?: string }) {
                     alt={item.label}
                     width={24}
                     height={24}
+                    className="dark:invert"
                   />
-                  <span>{item.label}</span>
+                  <span className=" text-black dark:text-white">
+                    {item.label}
+                  </span>
                 </div>
               </SelectItem>
             );
